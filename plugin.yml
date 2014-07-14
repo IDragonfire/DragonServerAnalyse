@@ -1,0 +1,11 @@
+name: DragonServerAnalyser
+author: IDragonfire
+version: 0.1
+main: com.github.idragonfire.dragonserveranalyser.DAS_Plugin
+commands:
+  das:
+    aliases: ['dserver', 'dragonserveranalyser']
+    description: Main command for all DragonServerAnalyse Commands
+    usage: /<command> [module] [params]
+    permission: dragonserveranalyse
+    permission-message: You don't have <permission>
