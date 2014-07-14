@@ -16,7 +16,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 
@@ -47,8 +46,8 @@ public class HopperAction implements Listener {
 		}
 
 		if (loc == null) {
-			Bukkit.broadcastMessage("no InventoryMoveItemEvent Handler for"
-					+ sourceHolder);
+			plugin.getLogger().warning(
+					"no InventoryMoveItemEvent Handler for" + sourceHolder);
 			return;
 		}
 		// try catch to improve performance
@@ -59,25 +58,42 @@ public class HopperAction implements Listener {
 		}
 	}
 
-	public void analyse() {
+	public void end(Player player) {
 		allClocks.clear();
 		HandlerList.unregisterAll(this);
+		analyse(player);
+	}
+
+	public void start(Player player) {
+		this.counterMap.clear();
+		Bukkit.getPluginManager().registerEvents(this, this.plugin);
+		player.sendMessage("Server tracks now Hopper actions");
+	}
+
+	public Location getLocation(int tpidx) {
+		if (tpidx > allClocks.size()) {
+			return null;
+		}
+		return allClocks.get(tpidx);
+	}
+
+	public void analyse(Player player) {
+		this.allClocks.clear();
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;
+		player.sendMessage("# Hopper activities:");
+		int tpidx = 1;
 		for (int i = 0; i < list.size(); i++) {
 			c = list.get(i);
 			if (connected(c.getLocation())) {
 				continue;
 			}
 			this.allClocks.add(c.getLocation());
-			Bukkit.broadcastMessage(c.getCount() + ":"
-					+ c.getLocation().toString());
+			player.sendMessage(tpidx + ": " + c.getCount());
+			tpidx++;
 		}
-		counterMap.clear();
-		Bukkit.getPluginManager().registerEvents(this, this.plugin);
-		Player p = (Player) Bukkit.getOnlinePlayers().toArray()[0];
-		p.teleport(this.allClocks.get(0));
+		player.sendMessage("---------------------");
 	}
 
 	public boolean connected(Location a) {
@@ -97,13 +113,6 @@ public class HopperAction implements Listener {
 			}
 		}
 		return false;
-	}
-
-	@EventHandler
-	public void command(PlayerCommandPreprocessEvent event) {
-		if (event.getMessage().contains("das hopper")) {
-			this.analyse();
-		}
 	}
 
 	public class Counter implements Comparable<Counter> {

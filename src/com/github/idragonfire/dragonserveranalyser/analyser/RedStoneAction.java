@@ -59,7 +59,7 @@ public class RedStoneAction implements Listener {
 	}
 
 	public void analyse(Player player) {
-		allClocks.clear();
+		this.allClocks.clear();
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;

@@ -4,15 +4,15 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.github.idragonfire.dragonserveranalyser.analyser.RedStoneAction;
+import com.github.idragonfire.dragonserveranalyser.analyser.HopperAction;
 
-public class CmdRedstone extends PlayerCommand {
-	private RedStoneAction listener;
+public class CmdHopper extends PlayerCommand {
+	private HopperAction listener;
 	private boolean active;
 
-	public CmdRedstone(Plugin plugin) {
+	public CmdHopper(Plugin plugin) {
 		super(plugin);
-		this.listener = new RedStoneAction(plugin);
+		this.listener = new HopperAction(plugin);
 		this.active = false;
 	}
 

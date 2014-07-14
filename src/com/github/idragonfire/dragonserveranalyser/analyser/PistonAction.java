@@ -17,7 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 
 public class PistonAction implements Listener {
@@ -52,25 +51,42 @@ public class PistonAction implements Listener {
 		}
 	}
 
-	public void analyse() {
+	public void end(Player player) {
 		allClocks.clear();
+		HandlerList.unregisterAll(this);
+		analyse(player);
+	}
+
+	public void start(Player player) {
+		this.counterMap.clear();
+		Bukkit.getPluginManager().registerEvents(this, this.plugin);
+		player.sendMessage("Server tracks now Piston actions");
+	}
+
+	public Location getLocation(int tpidx) {
+		if (tpidx > allClocks.size()) {
+			return null;
+		}
+		return allClocks.get(tpidx);
+	}
+
+	public void analyse(Player player) {
+		this.allClocks.clear();
 		HandlerList.unregisterAll(this);
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;
+		player.sendMessage("# Piston activities:");
+		int tpidx = 1;
 		for (int i = 0; i < list.size(); i++) {
 			c = list.get(i);
 			if (connected(c.getBlock().getLocation())) {
 				continue;
 			}
 			this.allClocks.add(c.getBlock().getLocation());
-			Bukkit.broadcastMessage(c.getCount() + ":"
-					+ c.getBlock().toString());
+			player.sendMessage(tpidx + ": " + c.getCount());
 		}
-		counterMap.clear();
-		Bukkit.getPluginManager().registerEvents(this, this.plugin);
-		Player p = (Player) Bukkit.getOnlinePlayers().toArray()[0];
-		p.teleport(this.allClocks.get(0));
+		player.sendMessage("---------------------");
 	}
 
 	public boolean connected(Location a) {
@@ -90,13 +106,6 @@ public class PistonAction implements Listener {
 			}
 		}
 		return false;
-	}
-
-	@EventHandler
-	public void command(PlayerCommandPreprocessEvent event) {
-		if (event.getMessage().contains("das piston")) {
-			this.analyse();
-		}
 	}
 
 	public class Counter implements Comparable<Counter> {
