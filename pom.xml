@@ -5,7 +5,7 @@
 	<artifactId>DragonServerAnalyse</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>DragonSkills</name>
+	<name>DragonServerAnalyse</name>
 	<url>https://github.com/IDragonfire/DragonServerAnalyse</url>
 	<description>http://dev.bukkit.org/bukkit-plugins/dragonserveranalyse/</description>
 

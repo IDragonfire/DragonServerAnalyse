@@ -15,7 +15,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 
 public class RedStoneAction implements Listener {
@@ -41,25 +40,41 @@ public class RedStoneAction implements Listener {
 		}
 	}
 
-	public void analyse() {
-		allClocks.clear();
+	public void end(Player player) {
 		HandlerList.unregisterAll(this);
+		analyse(player);
+	}
+
+	public void start(Player player) {
+		this.counterMap.clear();
+		Bukkit.getPluginManager().registerEvents(this, this.plugin);
+		player.sendMessage("Server tracks now Redstone actions");
+	}
+
+	public Location getLocation(int tpidx) {
+		if (tpidx > allClocks.size()) {
+			return null;
+		}
+		return allClocks.get(tpidx);
+	}
+
+	public void analyse(Player player) {
+		allClocks.clear();
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;
+		player.sendMessage("# Redstone activities:");
+		int tpidx = 1;
 		for (int i = 0; i < list.size(); i++) {
 			c = list.get(i);
 			if (connected(c.getBlock().getLocation())) {
 				continue;
 			}
 			this.allClocks.add(c.getBlock().getLocation());
-			Bukkit.broadcastMessage(c.getCount() + ":"
-					+ c.getBlock().toString());
+			player.sendMessage(tpidx + ": " + c.getCount());
+			tpidx++;
 		}
-		counterMap.clear();
-		Bukkit.getPluginManager().registerEvents(this, this.plugin);
-		Player p = (Player) Bukkit.getOnlinePlayers().toArray()[0];
-		p.teleport(this.allClocks.get(0));
+		player.sendMessage("---------------------");
 	}
 
 	public boolean connected(Location a) {
@@ -79,13 +94,6 @@ public class RedStoneAction implements Listener {
 			}
 		}
 		return false;
-	}
-
-	@EventHandler
-	public void command(PlayerCommandPreprocessEvent event) {
-		if (event.getMessage().contains("das redstone")) {
-			this.analyse();
-		}
 	}
 
 	public class Counter implements Comparable<Counter> {

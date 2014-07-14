@@ -20,9 +20,9 @@ public class CmdEvents extends DCommand {
 	synchronized public void onCommand(CommandSender sender, Command command,
 			String cmdName, String label, String[] args) {
 		if (active) {
-			this.listener.end();
+			this.listener.end(sender);
 		} else {
-			this.listener.start();
+			this.listener.start(sender);
 		}
 		active = !active;
 	}

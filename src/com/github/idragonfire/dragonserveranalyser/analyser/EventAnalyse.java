@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
@@ -21,7 +22,7 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
-public class EventAnalyse implements Listener {
+public class EventAnalyse {
 
 	private Set<Class<? extends Event>> activeEvents = new HashSet<Class<? extends Event>>();
 	private Plugin plugin;
@@ -35,7 +36,7 @@ public class EventAnalyse implements Listener {
 		this.injectionListener = new EventListener(this);
 	}
 
-	public void start() {
+	public void start(CommandSender sender) {
 		for (HandlerList handler : HandlerList.getHandlerLists()) {
 			for (RegisteredListener rListener : handler
 					.getRegisteredListeners()) {
@@ -45,7 +46,7 @@ public class EventAnalyse implements Listener {
 		counts.clear();
 		cancelled.clear();
 		for (Class<? extends Event> event_class : activeEvents) {
-			Bukkit.broadcastMessage("register: " + event_class.getSimpleName());
+			sender.sendMessage("register: " + event_class.getSimpleName());
 			Bukkit.getPluginManager().registerEvent(event_class,
 					injectionListener, EventPriority.MONITOR,
 					new EventExecutor() {
@@ -64,7 +65,8 @@ public class EventAnalyse implements Listener {
 		}
 	}
 
-	public void end() {
+	public void end(CommandSender sender) {
+		sender.sendMessage("Deregister events. Results:");
 		HandlerList.unregisterAll(this.injectionListener);
 		List<Container> list = new ArrayList<Container>();
 		for (String eventName : this.counts.keySet()) {
@@ -72,10 +74,11 @@ public class EventAnalyse implements Listener {
 		}
 		Collections.sort(list);
 		for (int i = 0; i < list.size(); i++) {
-			Bukkit.broadcastMessage(list.get(i).getKey() + ":"
+			sender.sendMessage(list.get(i).getKey() + ":"
 					+ list.get(i).getValue().get() + " (cancelled: "
 					+ this.cancelled.get(list.get(i).getKey()) + ")");
 		}
+		sender.sendMessage("---------------------");
 	}
 
 	public void globalEvent(Event event) {
