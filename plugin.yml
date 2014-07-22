@@ -8,4 +8,4 @@ commands:
     description: Main command for all DragonServerAnalyse Commands
     usage: /<command> [module] [params]
     permission: dragonserveranalyse
-    permission-message: You don't have <permission>
+    permission-message: You don't have the persmission: <permission>
