@@ -22,7 +22,6 @@ import org.bukkit.plugin.Plugin;
 public class HopperAction extends TeleportAnalyser implements Listener {
 	private HashMap<Location, Counter> counterMap;
 	private Plugin plugin;
-	private int distance = 6;
 
 	public HopperAction(Plugin plugin) {
 		counterMap = new HashMap<Location, Counter>();
@@ -84,25 +83,6 @@ public class HopperAction extends TeleportAnalyser implements Listener {
 			tpidx++;
 		}
 		player.sendMessage("---------------------");
-	}
-
-	public boolean connected(Location a) {
-		for (Location b : super.teleList) {
-			if (Math.abs(a.distance(b)) < this.distance) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean connected(List<Counter> list, int position) {
-		Location c = list.get(position).getLocation();
-		for (int i = 0; i < position; i++) {
-			if (list.get(i).getLocation().distance(c) < this.distance) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public class Counter implements Comparable<Counter> {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +21,6 @@ import org.bukkit.plugin.Plugin;
 public class PistonAction extends TeleportAnalyser implements Listener {
 	private HashMap<Block, Counter> counterMap;
 	private Plugin plugin;
-	private int distance = 6;
 
 	public PistonAction(Plugin plugin) {
 		counterMap = new HashMap<Block, Counter>();
@@ -77,25 +75,6 @@ public class PistonAction extends TeleportAnalyser implements Listener {
 			player.sendMessage(tpidx + ": " + c.getCount());
 		}
 		player.sendMessage("---------------------");
-	}
-
-	public boolean connected(Location a) {
-		for (Location b : super.teleList) {
-			if (Math.abs(a.distance(b)) < this.distance) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean connected(List<Counter> list, int position) {
-		Location c = list.get(position).getBlock().getLocation();
-		for (int i = 0; i < position; i++) {
-			if (list.get(i).getBlock().getLocation().distance(c) < this.distance) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public class Counter implements Comparable<Counter> {
