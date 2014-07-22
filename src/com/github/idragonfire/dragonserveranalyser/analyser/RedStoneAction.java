@@ -17,15 +17,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.plugin.Plugin;
 
-public class RedStoneAction implements Listener {
+public class RedStoneAction extends TeleportAnalyser implements Listener {
 	private HashMap<Block, Counter> counterMap;
-	private List<Location> allClocks;
 	private Plugin plugin;
 	private int distance = 6;
 
 	public RedStoneAction(Plugin plugin) {
 		counterMap = new HashMap<Block, Counter>();
-		allClocks = new ArrayList<Location>();
 		this.plugin = plugin;
 	}
 
@@ -51,15 +49,8 @@ public class RedStoneAction implements Listener {
 		player.sendMessage("Server tracks now Redstone actions");
 	}
 
-	public Location getLocation(int tpidx) {
-		if (tpidx > allClocks.size()) {
-			return null;
-		}
-		return allClocks.get(tpidx);
-	}
-
 	public void analyse(Player player) {
-		this.allClocks.clear();
+		super.teleList.clear();
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;
@@ -70,7 +61,7 @@ public class RedStoneAction implements Listener {
 			if (connected(c.getBlock().getLocation())) {
 				continue;
 			}
-			this.allClocks.add(c.getBlock().getLocation());
+			super.teleList.add(c.getBlock().getLocation());
 			player.sendMessage(tpidx + ": " + c.getCount());
 			tpidx++;
 		}
@@ -78,7 +69,7 @@ public class RedStoneAction implements Listener {
 	}
 
 	public boolean connected(Location a) {
-		for (Location b : allClocks) {
+		for (Location b : super.teleList) {
 			if (Math.abs(a.distance(b)) < this.distance) {
 				return true;
 			}

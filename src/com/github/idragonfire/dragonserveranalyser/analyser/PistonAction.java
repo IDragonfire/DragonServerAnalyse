@@ -19,15 +19,13 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.plugin.Plugin;
 
-public class PistonAction implements Listener {
+public class PistonAction extends TeleportAnalyser implements Listener {
 	private HashMap<Block, Counter> counterMap;
-	private List<Location> allClocks;
 	private Plugin plugin;
 	private int distance = 6;
 
 	public PistonAction(Plugin plugin) {
 		counterMap = new HashMap<Block, Counter>();
-		allClocks = new ArrayList<Location>();
 		this.plugin = plugin;
 	}
 
@@ -52,7 +50,6 @@ public class PistonAction implements Listener {
 	}
 
 	public void end(Player player) {
-		allClocks.clear();
 		HandlerList.unregisterAll(this);
 		analyse(player);
 	}
@@ -63,15 +60,8 @@ public class PistonAction implements Listener {
 		player.sendMessage("Server tracks now Piston actions");
 	}
 
-	public Location getLocation(int tpidx) {
-		if (tpidx > allClocks.size()) {
-			return null;
-		}
-		return allClocks.get(tpidx);
-	}
-
 	public void analyse(Player player) {
-		this.allClocks.clear();
+		super.teleList.clear();
 		HandlerList.unregisterAll(this);
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
@@ -83,14 +73,14 @@ public class PistonAction implements Listener {
 			if (connected(c.getBlock().getLocation())) {
 				continue;
 			}
-			this.allClocks.add(c.getBlock().getLocation());
+			super.teleList.add(c.getBlock().getLocation());
 			player.sendMessage(tpidx + ": " + c.getCount());
 		}
 		player.sendMessage("---------------------");
 	}
 
 	public boolean connected(Location a) {
-		for (Location b : allClocks) {
+		for (Location b : super.teleList) {
 			if (Math.abs(a.distance(b)) < this.distance) {
 				return true;
 			}

@@ -19,15 +19,13 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 
-public class HopperAction implements Listener {
+public class HopperAction extends TeleportAnalyser implements Listener {
 	private HashMap<Location, Counter> counterMap;
-	private List<Location> allClocks;
 	private Plugin plugin;
 	private int distance = 6;
 
 	public HopperAction(Plugin plugin) {
 		counterMap = new HashMap<Location, Counter>();
-		allClocks = new ArrayList<Location>();
 		this.plugin = plugin;
 	}
 
@@ -59,7 +57,6 @@ public class HopperAction implements Listener {
 	}
 
 	public void end(Player player) {
-		allClocks.clear();
 		HandlerList.unregisterAll(this);
 		analyse(player);
 	}
@@ -70,15 +67,8 @@ public class HopperAction implements Listener {
 		player.sendMessage("Server tracks now Hopper actions");
 	}
 
-	public Location getLocation(int tpidx) {
-		if (tpidx > allClocks.size()) {
-			return null;
-		}
-		return allClocks.get(tpidx);
-	}
-
 	public void analyse(Player player) {
-		this.allClocks.clear();
+		super.teleList.clear();
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;
@@ -89,7 +79,7 @@ public class HopperAction implements Listener {
 			if (connected(c.getLocation())) {
 				continue;
 			}
-			this.allClocks.add(c.getLocation());
+			super.teleList.add(c.getLocation());
 			player.sendMessage(tpidx + ": " + c.getCount());
 			tpidx++;
 		}
@@ -97,7 +87,7 @@ public class HopperAction implements Listener {
 	}
 
 	public boolean connected(Location a) {
-		for (Location b : allClocks) {
+		for (Location b : super.teleList) {
 			if (Math.abs(a.distance(b)) < this.distance) {
 				return true;
 			}

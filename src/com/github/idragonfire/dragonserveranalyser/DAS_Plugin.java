@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.github.idragonfire.dragonserveranalyser.command.CmdCraftbook;
 import com.github.idragonfire.dragonserveranalyser.command.CmdEvents;
 import com.github.idragonfire.dragonserveranalyser.command.CmdHopper;
 import com.github.idragonfire.dragonserveranalyser.command.CmdListeners;
@@ -35,6 +36,7 @@ public class DAS_Plugin extends JavaPlugin {
 		cmds.add(new CmdListeners(this));
 		cmds.add(new CmdHopper(this));
 		cmds.add(new CmdPiston(this));
+		cmds.add(new CmdCraftbook(this));
 	}
 
 	@Override
