@@ -11,7 +11,7 @@ public class CmdCraftbook extends PlayerCommand {
 
 	public CmdCraftbook(Plugin plugin) {
 		super(plugin);
-		cb = new CraftBookAnalyser();
+		cb = new CraftBookAnalyser(plugin);
 	}
 
 	@Override

@@ -20,11 +20,10 @@ import org.bukkit.plugin.Plugin;
 
 public class PistonAction extends TeleportAnalyser implements Listener {
 	private HashMap<Block, Counter> counterMap;
-	private Plugin plugin;
 
 	public PistonAction(Plugin plugin) {
+		super(plugin, "piston");
 		counterMap = new HashMap<Block, Counter>();
-		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -59,7 +58,7 @@ public class PistonAction extends TeleportAnalyser implements Listener {
 	}
 
 	public void analyse(Player player) {
-		super.teleList.clear();
+		super.init();
 		HandlerList.unregisterAll(this);
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
@@ -72,9 +71,12 @@ public class PistonAction extends TeleportAnalyser implements Listener {
 				continue;
 			}
 			super.teleList.add(c.getBlock().getLocation());
-			player.sendMessage(tpidx + ": " + c.getCount());
+			String msg = tpidx + ": " + c.getCount();
+			player.sendMessage(msg);
+			super.write(msg);
 		}
 		player.sendMessage("---------------------");
+		super.close();
 	}
 
 	public class Counter implements Comparable<Counter> {

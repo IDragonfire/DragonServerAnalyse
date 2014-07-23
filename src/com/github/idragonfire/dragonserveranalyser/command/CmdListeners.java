@@ -11,7 +11,7 @@ public class CmdListeners extends DCommand {
 
 	public CmdListeners(Plugin plugin) {
 		super(plugin);
-		this.analyser = new ListenerAnalyse();
+		this.analyser = new ListenerAnalyse(plugin);
 	}
 
 	@Override

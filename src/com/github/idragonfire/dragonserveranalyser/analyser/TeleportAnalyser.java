@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
-public class TeleportAnalyser {
+public abstract class TeleportAnalyser extends Analyser {
 	protected List<Location> teleList = new ArrayList<Location>();
 	protected int distance = 6;
+
+	public TeleportAnalyser(Plugin plugin, String analyseName) {
+		super(plugin, analyseName);
+	}
+
+	public void init() {
+		teleList.clear();
+		super.init();
+	}
 
 	public Location getLocation(int tpidx) {
 		if (tpidx > teleList.size()) {

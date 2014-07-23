@@ -5,21 +5,30 @@ import java.lang.reflect.Field;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.EventExecutor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
-public class ListenerAnalyse {
+public class ListenerAnalyse extends Analyser {
+	public ListenerAnalyse(Plugin plugin) {
+		super(plugin, "listeners");
+	}
+
 	public void command(CommandSender sender) {
+		super.init();
 		sender.sendMessage("Analyse Listeners: ");
 		String eventName = null;
 		for (HandlerList handler : HandlerList.getHandlerLists()) {
 			for (RegisteredListener rListener : handler
 					.getRegisteredListeners()) {
 				eventName = findEvent(rListener);
-				sender.sendMessage(rListener.getPlugin().getName() + ":"
-						+ eventName + ":" + rListener.getPriority());
+				String msg = rListener.getPlugin().getName() + ":" + eventName
+						+ ":" + rListener.getPriority();
+				sender.sendMessage(msg);
+				super.write(msg);
 			}
 		}
 		sender.sendMessage("---------------------");
+		super.close();
 	}
 
 	public String findEvent(RegisteredListener rlistener) {

@@ -6,11 +6,16 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class CraftBookAnalyser extends TeleportAnalyser {
 
+	public CraftBookAnalyser(Plugin plugin) {
+		super(plugin, "craftbook");
+	}
+
 	public void analyseOnline(Player player) {
-		super.teleList.clear();
+		super.init();
 		player.sendMessage("Analyse all loaded Chunks");
 		int tpidx = 1;
 		for (World world : Bukkit.getWorlds()) {
@@ -46,13 +51,14 @@ public class CraftBookAnalyser extends TeleportAnalyser {
 					if (!args.equals("")) {
 						args = "(" + args + ")";
 					}
-
-					player.sendMessage("#" + tpidx + " " + lines[1] + " "
-							+ args);
+					String msg = "#" + tpidx + " " + lines[1] + " " + args;
+					player.sendMessage(msg);
+					super.write(msg);
 					tpidx++;
 				}
 			}
 		}
 		player.sendMessage("... analyse finished");
+		super.close();
 	}
 }

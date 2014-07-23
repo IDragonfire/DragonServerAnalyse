@@ -1,10 +1,10 @@
 name: DragonServerAnalyser
 author: IDragonfire
-version: 0.3
+version: 0.5
 main: com.github.idragonfire.dragonserveranalyser.DAS_Plugin
 commands:
-  das:
-    aliases: ['dserver', 'dragonserveranalyser']
+  dsa:
+    aliases: ['dserver', 'dragonserveranalyser', 'das']
     description: Main command for all DragonServerAnalyse Commands
     usage: /<command> [module] [params]
     permission: dragonserveranalyse

@@ -21,11 +21,10 @@ import org.bukkit.plugin.Plugin;
 
 public class HopperAction extends TeleportAnalyser implements Listener {
 	private HashMap<Location, Counter> counterMap;
-	private Plugin plugin;
 
 	public HopperAction(Plugin plugin) {
+		super(plugin, "hopper");
 		counterMap = new HashMap<Location, Counter>();
-		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -67,7 +66,7 @@ public class HopperAction extends TeleportAnalyser implements Listener {
 	}
 
 	public void analyse(Player player) {
-		super.teleList.clear();
+		super.init();
 		List<Counter> list = new ArrayList<Counter>(this.counterMap.values());
 		Collections.sort(list);
 		Counter c = null;
@@ -79,10 +78,13 @@ public class HopperAction extends TeleportAnalyser implements Listener {
 				continue;
 			}
 			super.teleList.add(c.getLocation());
-			player.sendMessage(tpidx + ": " + c.getCount());
+			String msg = tpidx + ": " + c.getCount();
+			player.sendMessage(msg);
+			super.write(msg);
 			tpidx++;
 		}
 		player.sendMessage("---------------------");
+		super.close();
 	}
 
 	public class Counter implements Comparable<Counter> {

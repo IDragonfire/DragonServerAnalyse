@@ -22,31 +22,38 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
-public class EventAnalyse {
+public class EventAnalyse extends Analyser {
 
 	private Set<Class<? extends Event>> activeEvents = new HashSet<Class<? extends Event>>();
-	private Plugin plugin;
 	private Listener injectionListener;
 
 	private Map<String, AtomicInteger> counts = new HashMap<String, AtomicInteger>();
 	private Map<String, AtomicInteger> cancelled = new HashMap<String, AtomicInteger>();
 
 	public EventAnalyse(Plugin plugin) {
-		this.plugin = plugin;
+		super(plugin, "events");
 		this.injectionListener = new EventListener(this);
 	}
 
 	public void start(CommandSender sender) {
+		Class<? extends Event> tmpClass = null;
 		for (HandlerList handler : HandlerList.getHandlerLists()) {
 			for (RegisteredListener rListener : handler
 					.getRegisteredListeners()) {
-				activeEvents.add(findEvent(rListener));
+				tmpClass = findEvent(rListener);
+				if (tmpClass == null) {
+					continue;
+				}
+				activeEvents.add(tmpClass);
 			}
 		}
 		counts.clear();
 		cancelled.clear();
+		super.init();
 		for (Class<? extends Event> event_class : activeEvents) {
-			sender.sendMessage("register: " + event_class.getSimpleName());
+			String msg = "register: " + event_class.getSimpleName();
+			sender.sendMessage(msg);
+			write(msg);
 			Bukkit.getPluginManager().registerEvent(event_class,
 					injectionListener, EventPriority.MONITOR,
 					new EventExecutor() {
@@ -55,7 +62,6 @@ public class EventAnalyse {
 						public void execute(Listener listener, Event event)
 								throws EventException {
 							if (!(listener instanceof EventListener)) {
-								Bukkit.broadcastMessage("something get wrong");
 								return;
 							}
 							((EventListener) listener).getMaster().globalEvent(
@@ -74,11 +80,14 @@ public class EventAnalyse {
 		}
 		Collections.sort(list);
 		for (int i = 0; i < list.size(); i++) {
-			sender.sendMessage(list.get(i).getKey() + ":"
+			String msg = list.get(i).getKey() + ":"
 					+ list.get(i).getValue().get() + " (cancelled: "
-					+ this.cancelled.get(list.get(i).getKey()) + ")");
+					+ this.cancelled.get(list.get(i).getKey()) + ")";
+			sender.sendMessage(msg);
+			super.write(msg);
 		}
 		sender.sendMessage("---------------------");
+		super.close();
 	}
 
 	public void globalEvent(Event event) {
@@ -124,7 +133,7 @@ public class EventAnalyse {
 					.get(eventExecutor);
 			return event_class;
 		} catch (Exception e) {
-			e.printStackTrace();
+			// nothing
 		}
 		return null;
 	}
